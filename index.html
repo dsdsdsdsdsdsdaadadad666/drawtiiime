@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Калькулятор Draw Time Start</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    input, select {
+      padding: 8px;
+      font-size: 16px;
+      width: 240px;
+      margin-bottom: 12px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Калькулятор Draw Time Start</h2>
+
+  <label>День запуска:</label>
+  <select id="startDay">
+    <option value="monday">Понедельник</option>
+    <option value="tuesday">Вторник</option>
+    <option value="wednesday">Среда</option>
+    <option value="thursday">Четверг</option>
+    <option value="friday">Пятница</option>
+    <option value="saturday">Суббота</option>
+    <option value="sunday">Воскресенье</option>
+  </select>
+
+  <label>Время запуска:</label>
+  <input type="time" id="startTime">
+
+  <label>День розыгрыша:</label>
+  <select id="drawDay">
+    <option value="monday">Понедельник</option>
+    <option value="tuesday">Вторник</option>
+    <option value="wednesday">Среда</option>
+    <option value="thursday">Четверг</option>
+    <option value="friday">Пятница</option>
+    <option value="saturday">Суббота</option>
+    <option value="sunday">Воскресенье</option>
+  </select>
+
+  <label>Время розыгрыша:</label>
+  <input type="time" id="drawTime">
+
+  <button onclick="calculate()">Рассчитать</button>
+
+  <h3 id="result" style="margin-top: 20px;"></h3>
+
+  <script>
+    function calculate() {
+      const weekdays = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+
+      const startDay = document.getElementById('startDay').value;
+      const drawDay = document.getElementById('drawDay').value;
+      const startTime = document.getElementById('startTime').value;
+      const drawTime = document.getElementById('drawTime').value;
+
+      if (!startTime || !drawTime) {
+        document.getElementById('result').innerText = 'Укажите оба времени: запуска и розыгрыша.';
+        return;
+      }
+
+      const startIndex = weekdays.indexOf(startDay);
+      const drawIndex = weekdays.indexOf(drawDay);
+
+      let dayDiff = drawIndex - startIndex;
+      if (dayDiff < 0) dayDiff += 7;
+
+      const [startH, startM] = startTime.split(":").map(Number);
+      const [drawH, drawM] = drawTime.split(":").map(Number);
+
+      let totalStartMins = startIndex * 1440 + startH * 60 + startM;
+      let totalDrawMins = drawIndex * 1440 + drawH * 60 + drawM;
+
+      if (totalDrawMins < totalStartMins) totalDrawMins += 7 * 1440;
+
+      const intervalMins = totalDrawMins - totalStartMins;
+
+      const days = Math.floor(intervalMins / 1440);
+      const hours = Math.floor((intervalMins % 1440) / 60);
+      const minutes = intervalMins % 60;
+
+      document.getElementById('result').innerHTML =
+        `Интервал между запуском и розыгрышем: ${days} дн., ${hours} ч., ${minutes} мин.`;
+    }
+  </script>
+</body>
+</html>
